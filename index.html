@@ -207,14 +207,14 @@ function setProg(){
   if(pw) pw.outerHTML=html; else document.querySelector('.hdr').insertAdjacentHTML('afterend',html);
 }
 
-function getSaved(){try{return JSON.parse(localStorage.getItem('rv_saved')||'[]');}catch{return [];}}
+function getSaved(){try{return JSON.parse(localStorage.getItem("rvmatch_saved")||'[]');}catch(e){return [];}}
 function isSaved(name){return getSaved().some(s=>s.name===name);}
 function toggleSave(name,type,price,btn){
   let saved=getSaved();
   const idx=saved.findIndex(s=>s.name===name);
   if(idx>=0){saved.splice(idx,1);btn.textContent='🤍';}
   else{saved.push({name,type,price,date:new Date().toLocaleDateString()});btn.textContent='❤️';}
-  localStorage.setItem('rv_saved',JSON.stringify(saved));
+  localStorage.setItem("rvmatch_saved",JSON.stringify(saved));
   renderSavedBanner();
 }
 function renderSavedBanner(){
@@ -225,7 +225,7 @@ function renderSavedBanner(){
   el.style.display='block';
   el.innerHTML='<h3>❤️ Saved matches ('+saved.length+')</h3>'+
     saved.map(s=>'<div class="saved-item"><strong>'+s.name+'</strong> · '+s.type+' · '+s.price+' · saved '+s.date+'</div>').join('')+
-    '<button class="btn-clear-saved" onclick="localStorage.removeItem('rv_saved');renderSavedBanner()">Clear all saved</button>';
+    '<button class="btn-clear-saved" onclick="localStorage.removeItem("rvmatch_saved");renderSavedBanner()">Clear all saved</button>';
 }
 function isDeployed(){
   return window.location.hostname.endsWith('.netlify.app') ||
