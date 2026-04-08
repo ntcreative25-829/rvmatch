@@ -128,7 +128,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .err strong{display:block;margin-bottom:6px;font-weight:600;}
 .intro{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 24px 48px;max-width:480px;width:100%;margin:0 auto;}
 .intro-icon{font-size:48px;margin-bottom:24px;line-height:1;}
-.intro h1{font-family:'Lora',serif;font-size:clamp(32px,9vw,46px);font-weight:700;color:#f0ebe0;line-height:1.15;margin-bottom:14px;}
+.intro h1{font-family:'Lora',serif;font-size:clamp(24px,7vw,42px);font-weight:700;color:#f0ebe0;line-height:1.15;margin-bottom:14px;}
 .intro h1 span{color:#c4622d;}
 .intro>p{font-size:17px;color:rgba(240,235,224,0.85);font-weight:600;line-height:1.65;margin-bottom:36px;}
 .intro-meta{display:flex;gap:20px;margin-bottom:36px;}
@@ -241,7 +241,7 @@ function renderIntro(){
   const storedKey = localStorage.getItem('rv_api_key') || '';
   const showKeyInput = false;
   document.getElementById('app').innerHTML=`<div class="intro screen">
-    <h1>Find Your Perfect <span>RV!</span></h1>
+    <h1 style="white-space:nowrap;">Find Your Perfect <span>RV!</span></h1>
     <p>Answer 6 quick questions. Get matched to the top 3 best-fit RVs from every 2024, 2025, and 2026 make and model — towable and motorized.</p>
     <div class="intro-meta">
       <div class="meta-item"><span class="meta-num">6</span><span class="meta-lbl" style="font-weight:600;color:rgba(240,235,224,0.75);">questions</span></div>
@@ -370,11 +370,11 @@ function showResults(data){
     const rvtraderUrl = `https://www.rvtrader.com/rvs-for-sale?type=Fifth+Wheel%7C5th+Wheel&make=${encodeURIComponent(rv.make)}&model=${encodeURIComponent(rv.model)}&zip=${zip}&radius=200`;
     const cwUrl = `https://www.campingworld.com/shopping/rvs?searchText=${searchQ}&zip=${zip}`;
     const rvusaUrl = `https://www.rvusa.com/rv-guide/search?q=${searchQ}&zip=${zip}`;
-    html+=`<div class="rv-card ${isBest?'best':''}"><img src="https://source.unsplash.com/600x300/?rv,camper&sig=${rv.score}" alt="${rv.year} ${rv.make} ${rv.model}" style="width:100%;height:170px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block;" onerror="this.style.display='none'">
+    html+=`<div class="rv-card ${isBest?'best':''}"><img src="https://picsum.photos/seed/${imgSeed + 40}/600/300" alt="${rv.year} ${rv.make} ${rv.model}" style="width:100%;height:170px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block;" onerror="this.style.display='none'">
       <div class="card-top-row"><span class="rank-pill ${isBest?'':'silver'}">${labels[i]}</span><span class="match-pct ${isBest?'':'dim'}">${rv.score}%</span><button class="heart-btn" onclick="toggleSave('${rv.year} ${rv.make} ${rv.model}','${rv.type}','${price}',this)">${isSaved('${rv.year} ${rv.make} ${rv.model}')?'❤️':'🤍'}</button></div><div class="rv-name">${rv.year} ${rv.make} ${rv.model}</div><div class="rv-meta">${meta}</div><div class="rv-why">${rv.why}</div><div class="specs">${(rv.specs||[]).map(s=>`<span class="spec">${s}</span>`).join('')}</div><div class="rv-price" style="margin-bottom:14px;">${price}</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        <a href="https://www.rv.com/search/?year=${rv.year}&make=${encodeURIComponent(rv.make)}&model=${encodeURIComponent(rv.model)}&zip=${zip}&radius=200&condition=new" target="_blank" style="flex:1;min-width:140px;text-align:center;background:rgba(196,98,45,0.2);border:1px solid rgba(196,98,45,0.4);border-radius:10px;padding:10px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:#e8835a;text-decoration:none;letter-spacing:0.03em;">Find Inventory Near Me ↗</a>
-        <a href="${mfgUrl}" target="_blank" style="flex:1;min-width:140px;text-align:center;background:rgba(122,173,106,0.15);border:1px solid rgba(122,173,106,0.3);border-radius:10px;padding:10px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:#7aad6a;text-decoration:none;letter-spacing:0.03em;">Official Manufacturer Site ↗</a>
+        <a href="https://www.google.com/search?q=${encodeURIComponent(rv.year+' '+rv.make+' '+rv.model+' new RV for sale near '+zip)}" target="_blank" style="flex:1;min-width:140px;text-align:center;background:rgba(196,98,45,0.2);border:1px solid rgba(196,98,45,0.4);border-radius:10px;padding:10px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:#e8835a;text-decoration:none;letter-spacing:0.03em;">Search New Inventory ↗</a>
+        <a href="${mfgUrl}" target="_blank" style="flex:1;min-width:140px;text-align:center;background:rgba(122,173,106,0.15);border:1px solid rgba(122,173,106,0.3);border-radius:10px;padding:10px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:#7aad6a;text-decoration:none;letter-spacing:0.03em;">View on Manufacturer Site ↗</a>
       </div></div>`;
   });
   html+=`<button class="btn-restart" onclick="restart()">Start over</button></div>`;
