@@ -262,7 +262,7 @@ function pick(id,v,el){
   answers[id]=v;
   el.closest('.opts').querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
-  document.getElementById('btn-next').disabled=false;
+  const btn=document.getElementById('btn-next');if(btn)btn.disabled=false;
   // Auto-advance after short delay so user sees their selection register
   setTimeout(()=>{ goNext(); }, 300);
 }
