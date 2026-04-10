@@ -357,40 +357,67 @@ Rules: exactly 3 matches, rank 1 = best, real models only, real MSRP ranges, spe
   }
 }
 
-function showResults(data){
-  setTimeout(renderSavedBanner,50);
-  let html=`<div class="results"><div id="saved-banner" class="saved-banner" style="display:none;"></div><div class="results-hdr screen"><div class="results-eye">Your matches</div><h2>Top 3 rigs for you</h2><p>${data.summary||''}</p></div>`;
-  const mfgUrls={'Grand Design':'https://www.granddesignrv.com','Keystone':'https://www.keystonerv.com','Forest River':'https://www.forestriverinc.com','Winnebago':'https://www.winnebagorv.com','Thor':'https://www.thorindustries.com','Airstream':'https://www.airstream.com','Coachmen':'https://www.coachmenrv.com','Jayco':'https://www.jayco.com','Alliance':'https://www.alliancerv.com','Tiffin':'https://www.tiffinmotorhomes.com','Newmar':'https://www.newmarrv.com','Entegra':'https://www.entegracoach.com','nuCamp':'https://www.nucamprv.com','Lance':'https://www.lancecamper.com','Heartland':'https://www.heartlandrv.com','CrossRoads':'https://www.crossroadsrv.com','Dutchmen':'https://www.dutchmenrv.com','Northwood':'https://www.northwoodrv.com','Oliver':'https://olivertraveltrailers.com','Fleetwood':'https://www.fleetwoodrv.com'};
-  data.matches.forEach((rv,i)=>{
-    const isBest=i===0;
-    const mfgKey=Object.keys(mfgUrls).find(k=>rv.make&&rv.make.includes(k));
-    const mfgUrl=mfgKey?mfgUrls[mfgKey]:'https://www.rvtrader.com';
-    const labels=['Best match','#2 pick','#3 pick'];
-    const low=rv.msrp_low?Math.round(rv.msrp_low/1000):null;
-    const high=rv.msrp_high?Math.round(rv.msrp_high/1000):null;
-    const price=low&&high?`$${low}k – $${high}k MSRP`:'Price on request';
-    const meta=[rv.type,rv.length_ft?rv.length_ft+' ft':null,rv.sleep?'Sleeps '+rv.sleep:null].filter(Boolean).join(' · ');
-    const zip = answers.zip||'';
-    const searchQ = encodeURIComponent(rv.year+' '+rv.make+' '+rv.model);
-    const rvtraderUrl = `https://www.rvtrader.com/rvs-for-sale?type=Fifth+Wheel%7C5th+Wheel&make=${encodeURIComponent(rv.make)}&model=${encodeURIComponent(rv.model)}&zip=${zip}&radius=200`;
-    const cwUrl = `https://www.campingworld.com/shopping/rvs?searchText=${searchQ}&zip=${zip}`;
-    const rvusaUrl = `https://www.rvusa.com/rv-guide/search?q=${searchQ}&zip=${zip}`;
-    html+=`<div class="rv-card ${isBest?'best':''}"><img src="https://picsum.photos/seed/${imgSeed + 40}/600/300" alt="${rv.year} ${rv.make} ${rv.model}" style="width:100%;height:170px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block;" onerror="this.style.display='none'">
-      <div class="card-top-row"><span class="rank-pill ${isBest?'':'silver'}">${labels[i]}</span><span class="match-pct ${isBest?'':'dim'}">${rv.score}%</span><button class="heart-btn" onclick="toggleSave('${rv.year} ${rv.make} ${rv.model}','${rv.type}','${price}',this)">${isSaved('${rv.year} ${rv.make} ${rv.model}')?'❤️':'🤍'}</button></div><div class="rv-name">${rv.year} ${rv.make} ${rv.model}</div><div class="rv-meta">${meta}</div><div class="rv-why">${rv.why}</div><div class="specs">${(rv.specs||[]).map(s=>`<span class="spec">${s}</span>`).join('')}</div><div class="rv-price" style="margin-bottom:14px;">${price}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        <a href="https://www.google.com/search?q=${encodeURIComponent(rv.year+' '+rv.make+' '+rv.model+' new RV for sale near '+zip)}" target="_blank" style="flex:1;min-width:140px;text-align:center;background:rgba(196,98,45,0.2);border:1px solid rgba(196,98,45,0.4);border-radius:10px;padding:10px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:#e8835a;text-decoration:none;letter-spacing:0.03em;">Search New Inventory ↗</a>
-        <a href="${mfgUrl}" target="_blank" style="flex:1;min-width:140px;text-align:center;background:rgba(122,173,106,0.15);border:1px solid rgba(122,173,106,0.3);border-radius:10px;padding:10px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:#7aad6a;text-decoration:none;letter-spacing:0.03em;">View on Manufacturer Site ↗</a>
-      </div></div>`;
+function showResults(data) {
+  setTimeout(renderSavedBanner, 50);
+  var zip = answers.zip || '';
+  var html2 = '<div class="results">' +
+    '<div id="saved-banner" class="saved-banner" style="display:none;"></div>' +
+    '<div class="results-eye fade">Your matches</div>' +
+    '<h2 class="fade">Top 3 rigs for you</h2>' +
+    '<p class="results-summary fade">' + (data.summary || '') + '</p>';
+
+  data.matches.forEach(function(rv, i) {
+    var isBest = i === 0;
+    var labels = ['Best match','#2 pick','#3 pick'];
+    var low = rv.msrp_low ? Math.round(rv.msrp_low/1000) : null;
+    var high = rv.msrp_high ? Math.round(rv.msrp_high/1000) : null;
+    var price = (low && high) ? '$' + low + 'k – $' + high + 'k MSRP' : 'Price on request';
+    var meta2 = [rv.type, rv.length_ft ? rv.length_ft + ' ft' : null, rv.sleep ? 'Sleeps ' + rv.sleep : null].filter(Boolean).join(' · ');
+    var mfgKey = Object.keys(MFG_URLS).find(function(k) { return rv.make && rv.make.includes(k); });
+    var mfgDomain = mfgKey ? MFG_URLS[mfgKey].replace('https://www.','').replace('https://','') : '';
+    var mfgUrl = 'https://www.google.com/search?q=' + encodeURIComponent(rv.year + ' ' + rv.make + ' ' + rv.model + (mfgDomain ? ' site:' + mfgDomain : ''));
+    var cardKey = rv.year + ' ' + rv.make + ' ' + rv.model;
+    var imgSeed = ((rv.score * 17) + (i * 13)) % 1000;
+    var imgUrl = 'https://loremflickr.com/600/300/rv,camper?lock=' + imgSeed;
+    var inventoryUrl = 'https://www.rvtrader.com/rvs-for-sale?' +
+      'year=' + encodeURIComponent(rv.year || '') +
+      '&make=' + encodeURIComponent(rv.make || '') +
+      '&model=' + encodeURIComponent(rv.model || '') +
+      '&zip=' + encodeURIComponent(zip) +
+      '&radius=200&condition[]=new';
+
+    html2 += '<div class="rv-card' + (isBest ? ' best' : '') + '">' +
+      '<img class="rv-img" src="' + imgUrl + '" alt="' + cardKey + '" onerror="this.style.display='none'">' +
+      '<div class="card-top">' +
+        '<span class="rank-pill' + (isBest ? '' : ' silver') + '">' + labels[i] + '</span>' +
+        '<div class="card-right">' +
+          '<span class="match-pct' + (isBest ? '' : ' dim') + '">' + rv.score + '%</span>' +
+          '<button class="heart-btn" onclick="toggleSave(this,' +
+            JSON.stringify(cardKey) + ',' + JSON.stringify(rv.type || '') + ',' + JSON.stringify(price) +
+          ')">' + (isSaved(cardKey) ? '❤️' : '🤍') + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rv-name">' + cardKey + '</div>' +
+      '<div class="rv-meta">' + meta2 + '</div>' +
+      '<div class="rv-why">' + rv.why + '</div>' +
+      '<div class="specs">' + (rv.specs || []).map(function(s) { return '<span class="spec">' + s + '</span>'; }).join('') + '</div>' +
+      '<div class="rv-price">' + price + '</div>' +
+      '<div class="card-btns">' +
+        '<a href="' + inventoryUrl + '" target="_blank" class="btn-inventory">Find New Inventory Near Me ↗</a>' +
+        '<a href="' + mfgUrl + '" target="_blank" class="btn-mfg">Search Official Manufacturer Site ↗</a>' +
+      '</div>' +
+    '</div>';
   });
-  html+=`<button class="btn-restart" onclick="restart()">Start over</button></div>`;
-  document.getElementById('app').innerHTML=html;
+
+  html2 += '<button class="btn-restart" onclick="goHome()">Start over</button>' +
+    '<div class="footer">' +
+      '<p>RV Match surfaces only <strong>new 2024, 2025, and 2026 model year</strong> RVs — towable and motorized. Pre-owned inventory is not included.</p>' +
+      '<p class="disclaimer">RV Match is an independent matching tool and is not affiliated with, endorsed by, or sponsored by any RV manufacturer, dealer, or brand. All results are generated solely on the basis of your lifestyle answers. No manufacturer, dealer, or third party has paid to influence these results.</p>' +
+      '<p class="copyright">&copy; 2026 THE SILENT PLAYER COMPANY, INC. ALL RIGHTS RESERVED.</p>' +
+    '</div>' +
+  '</div>';
+
+  document.getElementById('app').innerHTML = html2;
 }
 
-renderIntro();
-</script>
-<div style="position:relative;z-index:1;margin-top:2rem;padding:2rem 24px 3rem;max-width:480px;margin-left:auto;margin-right:auto;text-align:center;border-top:1px solid rgba(240,235,224,0.08);">
-  <p style="font-size:12px;color:rgba(240,235,224,0.4);line-height:1.7;margin-bottom:1rem;font-family:'DM Sans',sans-serif;">RV Match surfaces only <strong style="color:rgba(240,235,224,0.6);">new 2024, 2025, and 2026 model year</strong> RVs &mdash; towable and motorized. Pre-owned inventory is not included.</p>
-  <p style="font-size:11px;color:rgba(240,235,224,0.25);line-height:1.7;margin-bottom:1.5rem;font-family:'DM Sans',sans-serif;font-weight:300;">RV Match is an independent matching tool and is not affiliated with, endorsed by, or sponsored by any RV manufacturer, dealer, or brand. All results are generated solely on the basis of your lifestyle answers. No manufacturer, dealer, or third party has paid to influence these results.</p>
-  <p style="font-size:10px;color:rgba(240,235,224,0.18);letter-spacing:0.1em;font-family:'DM Sans',sans-serif;font-weight:500;">&copy; 2026 THE SILENT PLAYER COMPANY, INC. ALL RIGHTS RESERVED.</p>
-</div></body>
-</html>
+
